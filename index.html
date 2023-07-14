@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Vue Mastery</title>
+        <!-- Import Styles -->
+        <link rel="stylesheet" href="./assets/styles.css" />
+        <!-- Import Vue.js -->
+        <script src="https://unpkg.com/vue@3.0.0-beta.12/dist/vue.global.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <!-- Code challage 2-->
+            <!-- <h1>{{product}}</h1>
+            <p>{{description}}</p> -->
+            <div class="nav-bar"></div>
+            <div class="cart">Cart {{cart}}</div>
+            <div class="product-display">
+                <div class="product-container">
+                    <div class="product-image">
+                        <!-- hiển thị dữ liệu trong thuộc tính tình dùng v:bind -->
+                        <!-- <img v-bind:src="image" alt=""> -->
+                        <!-- src là attribute, expression: giá trị (image) -->
+                        <!-- v-bind shorthand : -->
+                        <img
+                            :src="image"
+                            
+                            :class="!inStock ? 'out-of-stock-img' : ''"
+                            alt=""
+                        />
+
+                        <!-- Một vài cái ví dụ với v:bind -->
+                        <!-- <img :alt="description" alt=""> -->
+                        <!-- :class="[inStock ? out-of-stock-img : '' ]"-->
+                        <!-- <a :href="url" alt=""> -->
+                        <!-- Nói chung v:bind nó giúp lấy dữ liệu từ trong data(){} của js hiển thị lên bên trong thuộc tính của thẻ -->
+                    </div>
+                    <div class="product-info">
+                        <!-- Hiển thị dữ liệu ra ngoài nội dung {{}} -->
+                        <!-- để thực hiện tính toán với computed -->
+                        <h1>{{title}}</h1>
+                        <!-- lưu ý title này không có ở data, mà nó đang là 1 hàm được tính toán ở computed gửi qua bằng return -->
+                        <!-- Code challage 3-->
+                        <!-- <a :href="url">this is course</a> -->
+                        <!-- Learn conditional rendering  -->
+                        <!-- V-if v-else(điều kiện) -->
+                        <!-- v-if nếu true hiện ngược lại false thì sẽ xóa luôn phần tử đó khỏi cây dom -->
+                        <!-- giá trị đầu vào là true v-if hiện -->
+                        <p v-if="inStock">In Stock</p>
+                        <!-- Ngoài việc truyền true false, ta còn có thể truyền số vào và thực hiện logic so sánh để quyết định true hay false -->
+                        <!-- <p v-if="inVentory > 10">In Stock</p>
+
+                        <p v-else-if="inVentory <= 10  && inVentory > 0">
+                            Almost sold out!
+                        </p> -->
+                        <!-- giá trị đầu vào là false thì hiện v-else bỏ qua v-if -->
+                        <p v-else>Out of Stock</p>
+                        <!-- V-show: cũng là ẩn hiện. Nhưng không xóa nó khỏi cây DOM, chỉ thêm thuộc tính display none vào cho thẻ đó -->
+                        <!-- <p v-show="inStock">Ok</p> -->
+                        <!-- <p v-show="onSale">On Sale</p> -->
+                        <p>{{sale}}</p>
+                        <!-- Dùng vòng lặp để lặp ra danh sách -->
+                        <!-- v-for hoặt động giống như for loops -->
+                        <ul>
+                            <!-- detail đóng vai trò là alias || details đóng vai trò là collection -->
+                            <li v-for="detail in details">{{detail}}</li>
+                        </ul>
+                        <!-- lắng nghe sự kiện di chuột vào và thực hiện hàm updateimage -->
+                        <!-- <div
+                            v-for="variant in variants"
+                            :key="variant.id"
+                            @mouseover="updateImage(variant.image)"
+                            class="color-circle"
+                            :style="{backgroundColor: variant.color}"
+                        > -->
+                        <div
+                            v-for="(variant, index) in variants"
+                            :key="variant.id"
+                            @mouseover="updateVariant(index)"
+                            class="color-circle"
+                            :style="{backgroundColor: variant.color}"
+                        >
+                            <!-- dùng v-bind style để lấy ra dữ liệu từ trong data tham chiếu đến variant.color để lấy ra màu sắc -->
+                        </div>
+                        <!-- challenge 5 -->
+                        <div>
+                            <div
+                                style="display: inline-block; padding: 10px"
+                                v-for="size in sizes"
+                            >
+                                {{size}}
+                            </div>
+                            <!-- sử dụng v-on để thêm sự kiện -->
+                            <!-- v-on:click (event we are listen for: sự kiện mà chúng ta muốn lắng nghe, trong ví dụ này là click) -->
+                            <!-- expression we're triggering, Biểu thức chúng ta sẽ kích hoạt -->
+                            <!-- <button class="button" v-on:click="cart += 1">Add to cart</button> -->
+                            <!-- Thay thế cart += 1 thành 1 hàm (method) addToCart -->
+                            <!-- Có 1 số cách để bind class -->
+                            <!-- cách 1 sử dụng :class giống như đang làm dưới ví dụ -->
+                            <!-- cách 2 sử dụng: Ternary Operators: sử dụng toán tử 3 ngôi  -->
+                            <!-- ví dụ: <div :class="[isActive ? activeClass : ""]"></div> -->
+                            <!--                      Điều kiện ? true vào đây : false vào đây -->
+                            <button
+                                class="button"
+                                v-on:click="addToCart"
+                                :disabled="!inStock"
+                                :class="{disabledButton: !inStock}"
+                            >
+                                Add to cart
+                            </button>
+                            <!-- quay lại file js để định về cái method addToCart -->
+                            <!-- v-on là cái lỗ tai, click là hành động. Khi hành đọng xảy ra v-on lắng nghe và thực hiện gọi tới methods và thực hiện tính năng hàm của hàm được gọi -->
+                            <!-- cú pháp viết tắt của v-on là @ cụ thể v-on:click <=> @click -->
+
+                            <!-- challage 6 làm fake nút - đi số lượng giỏ hàng -->
+                            <button class="button" @click="decrementCart">
+                                Remove item.
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Js -->
+        <script src="./main.js"></script>
+        <!-- Mount App -->
+        <script>
+            // const moutedApp lấy dữ liệu từ import, sau đó .mount('#app') đưa dữ liệu lên id app
+            const mountedApp = app.mount("#app");
+        </script>
+    </body>
+</html>
