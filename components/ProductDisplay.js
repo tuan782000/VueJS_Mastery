@@ -7,7 +7,7 @@ app.component("product-display", {
     },
     template:
         /*html*/
-        ` <div class="product-display">
+    ` <div class="product-display">
         <div class="product-container">
             <div class="product-image">
                 <img
@@ -24,9 +24,9 @@ app.component("product-display", {
                 <p>Shipping: {{shipping}}</p>
                 
                 <p>{{sale}}</p>
-                <ul>
-                    <li v-for="detail in details">{{detail}}</li>
-                </ul>
+               <!-- solution -->
+                <product-details :details="details"></product-details>
+                 <!-- solution -->
                 <div
                     v-for="(variant, index) in variants"
                     :key="variant.id"
@@ -54,6 +54,8 @@ app.component("product-display", {
                     </button>
                 </div>
             </div>
+            <review-form @review-submitted="addReview"></review-form>
+            <review-list v-if="reviews.length" :reviews="reviews"></review-list>
         </div>
     </div>`,
     data() {
@@ -84,12 +86,17 @@ app.component("product-display", {
                 },
             ],
             sizes: ["8", "9", "10", "11", "12"],
+            reviews: []
         };
     },
     methods: {
         addToCart() {
             // tham chiếu đến cái cart trong data, thực hiện tính năng
-            this.cart += 1;
+            // this.cart += 1;
+            // này tuyền ko
+            // this.$emit('add-to-cart')
+            // truyền có id sản phẩm theo
+            this.$emit("add-to-cart", this.variants[this.selectedVariant].id);
         },
         // viết hàm truyền vào ảnh
         // updateImage(variantImage) {
@@ -101,10 +108,15 @@ app.component("product-display", {
             console.log(index);
         },
         decrementCart() {
-            if (this.cart > 0) {
-                this.cart -= 1;
-            }
+            // if (this.cart > 0) {
+            //     this.cart -= 1;
+            // }
+            // this.$emit('minus-to-cart')
+            this.$emit("minus-to-cart", this.variants[this.selectedVariant].id);
         },
+        addReview(review) {
+            this.reviews.push(review)
+        }
     },
     computed: {
         title() {
@@ -126,7 +138,7 @@ app.component("product-display", {
             if (this.premium) {
                 return "Free";
             }
-            return 2.99 + '$';
+            return 2.99 + "$";
         },
     },
 });
